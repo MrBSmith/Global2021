@@ -8,6 +8,7 @@
 radius = 7.5
 
 [node name="Player" instance=ExtResource( 3 )]
+z_index = 1
 script = ExtResource( 1 )
 
 [node name="CollisionShape2D" parent="." index="0"]
@@ -23,5 +24,5 @@ drag_margin_right = 0.3
 drag_margin_bottom = 0.3
 editor_draw_drag_margin = true
 
-[node name="Sprite" type="Sprite" parent="." index="2"]
+[node name="Sprite" parent="." index="2"]
 texture = ExtResource( 2 )

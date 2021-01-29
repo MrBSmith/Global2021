@@ -1,8 +1,6 @@
 extends Actor
 class_name Player
 
-const SPEED : float = 200.0
-
 var v_movement : float = 0.0
 var h_movement : float = 0.0
 
@@ -16,7 +14,7 @@ func get_class() -> String: return "Player"
 
 func _physics_process(_delta: float) -> void:
 	var dir = Vector2(v_movement, h_movement).normalized()
-	var velocity = dir * SPEED
+	var velocity = dir * speed
 	
 	var __ = move_and_slide(velocity)
  
