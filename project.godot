@@ -14,20 +14,56 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Scenes/Actors/Actor.gd"
 }, {
+"base": "StateBase",
+"class": "Chase",
+"language": "GDScript",
+"path": "res://Scenes/Actors/Enemy/Chase.gd"
+}, {
 "base": "Actor",
 "class": "Enemy",
 "language": "GDScript",
 "path": "res://Scenes/Actors/Enemy/Enemy.gd"
 }, {
+"base": "Navigation2D",
+"class": "Pathfinder",
+"language": "GDScript",
+"path": "res://Scenes/Level/Pathfinder.gd"
+}, {
 "base": "Actor",
 "class": "Player",
 "language": "GDScript",
 "path": "res://Scenes/Actors/Player/Player.gd"
+}, {
+"base": "StateBase",
+"class": "SeekState",
+"language": "GDScript",
+"path": "res://Scenes/Actors/Enemy/Seek.gd"
+}, {
+"base": "Node",
+"class": "StateBase",
+"language": "GDScript",
+"path": "res://AbstractClasses/StateBase.gd"
+}, {
+"base": "Node",
+"class": "StatesMachine",
+"language": "GDScript",
+"path": "res://AbstractClasses/StateMachine.gd"
+}, {
+"base": "StateBase",
+"class": "WanderState",
+"language": "GDScript",
+"path": "res://Scenes/Actors/Enemy/Wander.gd"
 } ]
 _global_script_class_icons={
 "Actor": "",
+"Chase": "",
 "Enemy": "",
-"Player": ""
+"Pathfinder": "",
+"Player": "",
+"SeekState": "",
+"StateBase": "",
+"StatesMachine": "",
+"WanderState": ""
 }
 
 [application]
@@ -35,6 +71,10 @@ _global_script_class_icons={
 config/name="Global2021"
 run/main_scene="res://Scenes/Level/Level.tscn"
 config/icon="res://icon.png"
+
+[autoload]
+
+Events="*res://Autoload/Events.gd"
 
 [display]
 

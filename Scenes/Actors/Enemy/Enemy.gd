@@ -3,6 +3,8 @@ class_name Enemy
 
 var path := PoolVector2Array()
 
+signal path_finished()
+
 #### ACCESSORS ####
 
 func is_class(value: String): return value == "Enemy" or .is_class(value)
@@ -11,9 +13,8 @@ func get_class() -> String: return "Enemy"
 
 #### BUILT-IN ####
 
-func _physics_process(delta: float) -> void:
-	if !path.empty():
-		move(delta)
+func _ready() -> void:
+	var __ = Events.connect("send_path", self, "_on_path_received")
 
 #### VIRTUALS ####
 
@@ -36,13 +37,21 @@ func move(delta: float):
 	if position.distance_to(target) < 2.0:
 		position = target
 		path.remove(0)
+		if path.empty():
+			emit_signal("path_finished")
+
 
 #### INPUTS ####
 
-#### MOVEMENT TEST ####
+##### MOVEMENT TEST ####
 #func _input(_event: InputEvent) -> void:
 #	if Input.is_action_just_pressed("click"):
 #		var mouse_pos = get_global_mouse_position()
-#		path = get_parent().get_simple_path(position, mouse_pos)
+#		Events.emit_signal("query_path", self, position, mouse_pos)
+
  
 #### SIGNAL RESPONSES ####
+
+func _on_path_received(who: Actor, received_path: PoolVector2Array):
+	if who == self:
+		path = received_path
