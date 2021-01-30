@@ -23,8 +23,11 @@ func enter_state():
 	update_path()
 	$Timer.start(update_target_path_cooldown)
 
+
 func exit_state():
 	$Timer.stop()
+	set_target(null)
+
 
 func update(delta: float):
 	if !owner.get_move_path().empty():

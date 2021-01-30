@@ -15,7 +15,7 @@ func get_class() -> String: return "Enemy"
 func set_move_path(value: PoolVector2Array): move_path = value
 func get_move_path() -> PoolVector2Array: return move_path
 
-func set_state(value: StateBase): statemachine.set_state(value)
+func set_state(value): statemachine.set_state(value)
 func get_state() -> StateBase : return statemachine.get_state()
 func get_state_name() -> String: return statemachine.get_state_name()
 
@@ -25,6 +25,8 @@ func _ready() -> void:
 	var __ = Events.connect("send_path", $StatesMachine/Wander, "_on_path_received")
 	__ = Events.connect("send_path", $StatesMachine/Chase, "_on_path_received")
 	__ = $DetectionArea.connect("area_entered", self, "_on_area_entered_detection_area")
+	__ = $DetectionArea.connect("body_entered", self, "_on_body_entered_detection_area")
+	__ = $DetectionArea.connect("body_exited", self, "_on_body_exited_detection_area")
 
 #### VIRTUALS ####
 
@@ -58,7 +60,7 @@ func chase(target: Actor):
 
 #### INPUTS ####
 
-##### MOVEMENT TEST ####
+#### MOVEMENT TEST ####
 #func _input(_event: InputEvent) -> void:
 #	if Input.is_action_just_pressed("click"):
 #		var mouse_pos = get_global_mouse_position()
@@ -67,10 +69,20 @@ func chase(target: Actor):
  
 #### SIGNAL RESPONSES ####
 
+func _on_body_entered_detection_area(body: PhysicsBody2D):
+	if body is Player:
+		chase(body)
+
+
+func _on_body_exited_detection_area(body: PhysicsBody2D):
+	if body is Player:
+		set_state("Wander")
+
+
 func _on_area_entered_detection_area(area: Area2D):
 	if !area is LightBase:
 		return
-	
-	if get_state_name() == "Wander":
-		chase(area.owner)
+#
+#	if get_state_name() == "Wander":
+#		chase(area.owner)
 
