@@ -3,7 +3,7 @@ class_name Level
 
 const gold_nugget_scene = preload("res://Scenes/InteractiveObjects/GoldNugget/GoldNugget.tscn")
 
-var level_size = Vector2(40, 20)
+var level_size = Vector2(41, 20)
 
 onready var walls_node = $Navigation2D/Walls
 onready var floor_node = $Navigation2D/Floor
@@ -11,7 +11,7 @@ onready var fog_node = $Navigation2D/FogOfWar
 
 onready var tile_size = floor_node.get_cell_size()
 
-export var gold_objective : int = 5
+export var gold_objective : int = 6
 export var debug := false
 
 #### ACCESSORS ####
@@ -27,7 +27,7 @@ func _ready() -> void:
 	
 	randomize()
 	
-	generate_walls()
+	generate_level()
 	
 	init_fog_of_war()
 	init_floor_tiles()
@@ -41,26 +41,82 @@ func _ready() -> void:
 #### LOGIC ####
 
 
-func generate_walls():
+func generate_level():
+	var soil_tile_id = walls_node.get_tileset().find_tile_by_name("Soil")
+	var wall_tile_id = walls_node.get_tileset().find_tile_by_name("Wall")
+	var gold_tile_id = walls_node.get_tileset().find_tile_by_name("Gold")
+	
+	var soil_noise = get_rdm_noise()
+	while(!is_noise_valid(soil_noise)):
+		soil_noise = get_rdm_noise()
+	
+	var wall_noise = get_rdm_noise()
+	
+	# Place soil and walls tiles
+	for i in range(level_size.y):
+		for j in range(level_size.x):
+			var soil_value = soil_noise.get_noise_2d(j, i)
+			
+			if is_cell_map_boundary(Vector2(j, i)):
+				walls_node.set_cell(j, i, wall_tile_id)
+			elif soil_value > 0.2:
+				if wall_noise.get_noise_2d(j, i) > 0.4:
+					walls_node.set_cell(j, i, wall_tile_id)
+				else:
+					walls_node.set_cell(j, i, soil_tile_id)
+	
+	var wall_cells = walls_node.get_used_cells()
+	wall_cells.shuffle()
+	
+	# Place gold
+	for _i in range(gold_objective + float(gold_objective) / 2):
+		var cell = wall_cells.pop_front()
+		
+		while(is_cell_map_boundary(cell) && walls_node.get_cellv(cell) == wall_tile_id):
+			cell = wall_cells.pop_front()
+		
+		walls_node.set_cellv(cell, gold_tile_id)
+	
+	# Place level entrance
+	var entry_cell = Vector2(level_size.x / 2, 0)
+	
+	for i in range(0, -3, -1):
+		for j in range(-2, 3, 1):
+			if j == -2 or j == 2 or i == -2:
+				walls_node.set_cell(entry_cell.x + j, entry_cell.y + i, wall_tile_id)
+			else:
+				walls_node.set_cell(entry_cell.x + j, entry_cell.y + i, -1)
+	
+	# Place player
+	$Player.set_position((entry_cell + Vector2.UP) * tile_size)
+	
+
+
+func is_noise_valid(noise: OpenSimplexNoise) -> bool:
+	var entry_cell = Vector2(level_size.x / 2, 1)
+	for i in range(-1, 2, 1):
+		var value = noise.get_noise_2d(entry_cell.x + i, entry_cell.y)
+		if value > 0.2:
+			return false
+	return true
+
+
+func is_cell_map_boundary(cell: Vector2) -> bool:
+	return cell.x == 0 or cell.y == 0 or \
+		cell.x == level_size.x - 1 or cell.y == level_size.y - 1
+
+
+
+func get_rdm_noise(period := 10.0, persistance:= 0.5):
 	var noise = OpenSimplexNoise.new()
 	
 	# Configure
 	noise.seed = randi()
 	noise.octaves = 3
-	noise.period = 10.0
-	noise.persistence = 0.5
+	noise.period = period
+	noise.persistence = persistance
 	
-	var soil_tile_id = walls_node.get_tileset().find_tile_by_name("Soil")
-	var wall_tile_id = walls_node.get_tileset().find_tile_by_name("Wall")
-	
-	for i in range(level_size.y):
-		for j in range(level_size.x):
-			var value = noise.get_noise_2d(j, i)
-			
-			if i == 0 or j == 0 or i == level_size.y - 1 or j == level_size.x - 1:
-				walls_node.set_cell(j, i, wall_tile_id)
-			elif value > 0.2:
-				walls_node.set_cell(j, i, soil_tile_id)
+	return noise
 
 
 func init_floor_tiles():
@@ -111,7 +167,7 @@ func damage_tile(cell: Vector2):
 func _input(_event: InputEvent) -> void:
 	if debug && Input.is_action_just_pressed("debug_reinitilize_level"):
 		walls_node.clear()
-		generate_walls()
+		generate_level()
 
 
 #### SIGNAL RESPONSES ####
