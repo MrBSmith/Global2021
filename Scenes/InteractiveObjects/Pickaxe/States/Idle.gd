@@ -20,7 +20,6 @@ func get_class() -> String: return "PickaxeIdleState"
 func interact(actor: Actor):
 	owner.equip(actor)
 
-
 #### INPUTS ####
 
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Scenes/Actors/Player/Player.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Scenes/Level/Tileset/LevelTileset.tres" type="TileSet" id=2]
@@ -9,6 +9,7 @@
 [ext_resource path="res://Scenes/FogOfWar/FogOfWar.gd" type="Script" id=7]
 [ext_resource path="res://Scenes/InteractiveObjects/Pickaxe/Pickaxe.tscn" type="PackedScene" id=8]
 [ext_resource path="res://Scenes/Level/Walls.gd" type="Script" id=9]
+[ext_resource path="res://Scenes/HUD/HUD.gd" type="Script" id=10]
 
 [node name="Level" type="Node2D"]
 script = ExtResource( 5 )
@@ -21,7 +22,7 @@ position = Vector2( 263.261, 130.962 )
 
 [node name="Enemy" parent="." instance=ExtResource( 3 )]
 position = Vector2( 104.117, 121.137 )
-speed = 100.0
+speed = 70.0
 
 [node name="Navigation2D" type="Navigation2D" parent="."]
 script = ExtResource( 4 )
@@ -60,3 +61,28 @@ position = Vector2( 166.346, 85.4647 )
 
 [node name="Pickaxe" parent="." instance=ExtResource( 8 )]
 position = Vector2( 25.362, 24.3608 )
+
+[node name="GUI" type="CanvasLayer" parent="."]
+
+[node name="HUD" type="Control" parent="GUI"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 10 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GUI/HUD"]
+margin_right = 40.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GoldLabel" type="Label" parent="GUI/HUD/VBoxContainer"]
+margin_right = 40.0
+margin_bottom = 14.0
+text = "Gold: "
+__meta__ = {
+"_edit_use_anchors_": false
+}

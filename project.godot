@@ -34,6 +34,26 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Scenes/FogOfWar/FogTile/FogTile.gd"
 }, {
+"base": "InteractiveObject",
+"class": "GoldNugget",
+"language": "GDScript",
+"path": "res://Scenes/InteractiveObjects/GoldNugget/GoldNugget.gd"
+}, {
+"base": "Node",
+"class": "GoldNuggetFollowState",
+"language": "GDScript",
+"path": "res://Scenes/InteractiveObjects/GoldNugget/States/Follow.gd"
+}, {
+"base": "StateBase",
+"class": "GoldNuggetIdleState",
+"language": "GDScript",
+"path": "res://Scenes/InteractiveObjects/GoldNugget/States/Idle.gd"
+}, {
+"base": "Control",
+"class": "HUD",
+"language": "GDScript",
+"path": "res://Scenes/HUD/HUD.gd"
+}, {
 "base": "Node2D",
 "class": "InteractiveObject",
 "language": "GDScript",
@@ -110,6 +130,10 @@ _global_script_class_icons={
 "Enemy": "",
 "FogOfWar": "",
 "FogTile": "",
+"GoldNugget": "",
+"GoldNuggetFollowState": "",
+"GoldNuggetIdleState": "",
+"HUD": "",
 "InteractiveObject": "",
 "Level": "",
 "LightBase": "",
@@ -135,6 +159,7 @@ config/icon="res://icon.png"
 [autoload]
 
 Events="*res://Autoload/Events.gd"
+Progression="*res://Autoload/Progression.gd"
 
 [display]
 
