@@ -3,6 +3,11 @@ class_name Enemy
 
 onready var statemachine = $StatesMachine
 onready var chase_state = $StatesMachine/Chase
+onready var seek_state = $StatesMachine/Seek
+onready var detection_area = $DetectionArea
+
+export var debug : bool = false
+
 var move_path := PoolVector2Array()
 
 signal path_finished()
@@ -23,10 +28,14 @@ func get_state_name() -> String: return statemachine.get_state_name()
 
 func _ready() -> void:
 	var __ = Events.connect("send_path", $StatesMachine/Wander, "_on_path_received")
-	__ = Events.connect("send_path", $StatesMachine/Chase, "_on_path_received")
-	__ = $DetectionArea.connect("area_entered", self, "_on_area_entered_detection_area")
-	__ = $DetectionArea.connect("body_entered", self, "_on_body_entered_detection_area")
-	__ = $DetectionArea.connect("body_exited", self, "_on_body_exited_detection_area")
+	__ = Events.connect("send_path", chase_state, "_on_path_received")
+	__ = Events.connect("send_path", seek_state, "_on_path_received")
+	__ = detection_area.connect("area_entered", self, "_on_area_entered_detection_area")
+	__ = detection_area.connect("body_entered", self, "_on_body_entered_detection_area")
+	__ = detection_area.connect("body_exited", self, "_on_body_exited_detection_area")
+	
+	if debug:
+		__ = statemachine.connect("state_changed", $StateLabel, "_on_state_changed")
 
 #### VIRTUALS ####
 
@@ -53,18 +62,17 @@ func move(delta: float):
 			emit_signal("path_finished")
 
 
+func seek(light_source: LightBase):
+	seek_state.set_light_source(light_source)
+	set_state(seek_state)
+
+
 func chase(target: Actor):
 	chase_state.set_target(target)
 	set_state(chase_state)
 
 
 #### INPUTS ####
-
-#### MOVEMENT TEST ####
-#func _input(_event: InputEvent) -> void:
-#	if Input.is_action_just_pressed("click"):
-#		var mouse_pos = get_global_mouse_position()
-#		Events.emit_signal("query_path", self, position, mouse_pos)
 
  
 #### SIGNAL RESPONSES ####
@@ -82,7 +90,7 @@ func _on_body_exited_detection_area(body: PhysicsBody2D):
 func _on_area_entered_detection_area(area: Area2D):
 	if !area is LightBase:
 		return
-#
-#	if get_state_name() == "Wander":
-#		chase(area.owner)
+
+	if get_state_name() == "Wander":
+		seek(area)
 

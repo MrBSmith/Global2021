@@ -25,6 +25,8 @@ func _ready() -> void:
 func enter_state():
 	trigger_wait_time()
 
+func exit_state():
+	timer_node.stop()
 
 func update(delta: float):
 	if !owner.get_move_path().empty():
@@ -60,11 +62,13 @@ func find_wander_path():
 #### SIGNAL RESPONSES ####
 
 func _on_timer_timeout():
-	find_wander_path()
+	if owner.get_state() == self:
+		find_wander_path()
 
 
 func _on_path_finished():
-	trigger_wait_time()
+	if owner.get_state() == self:
+		trigger_wait_time()
 
 
 func _on_path_received(who: Actor, received_path: PoolVector2Array):

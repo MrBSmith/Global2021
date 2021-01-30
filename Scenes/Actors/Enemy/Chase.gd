@@ -49,7 +49,8 @@ func update_path():
 #### SIGNAL RESPONSES ####
 
 func _on_timer_timeout():
-	update_path()
+	if owner.get_state() == self:
+		update_path()
 
 
 func _on_path_received(who: Actor, received_path: PoolVector2Array):
