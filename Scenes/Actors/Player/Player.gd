@@ -21,11 +21,13 @@ func is_light_on() -> bool: return light_on
 
 #### BUILT-IN ####
 
+
 func _physics_process(_delta: float) -> void:
 	var dir = Vector2(v_movement, h_movement).normalized()
 	var velocity = dir * speed
 	
 	var __ = move_and_slide(velocity)
+
  
 
 #### VIRTUALS ####

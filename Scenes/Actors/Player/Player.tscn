@@ -28,3 +28,4 @@ editor_draw_drag_margin = true
 texture = ExtResource( 2 )
 
 [node name="Lighter" parent="." index="3" instance=ExtResource( 4 )]
+active = true

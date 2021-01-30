@@ -12,3 +12,7 @@ signal send_path(who, path)
 
 signal try_to_fire()
 signal light_activated(light_source ,active)
+
+#### FOG ####
+
+signal visible_tiles_update()
