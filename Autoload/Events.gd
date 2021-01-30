@@ -10,8 +10,9 @@ signal send_path(who, path)
 
 #### INTERACTIONS ####
 
-signal try_to_fire()
+signal interact()
 signal light_activated(light_source ,active)
+signal damage_tile(cell)
 
 #### FOG ####
 

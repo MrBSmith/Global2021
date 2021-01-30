@@ -32,12 +32,13 @@ func _ready() -> void:
 	$Fire/Light.set_visible(on_fire)
 	$Fire/Particles2D.set_emitting(on_fire)
 	
-	var __ = Events.connect("try_to_fire", self, "_on_try_to_fire")
-	__ = $Fire/Timer.connect("timeout", self, "_on_fire_timer_timeout")
+	var __ = $Fire/Timer.connect("timeout", self, "_on_fire_timer_timeout")
 
 
 #### VIRTUALS ####
 
+func interact():
+	set_on_fire(true)
 
 
 #### LOGIC ####
@@ -49,12 +50,6 @@ func _ready() -> void:
 
 
 #### SIGNAL RESPONSES ####
-
-func _on_try_to_fire():
-	var bodies_array = $Area2D.get_overlapping_bodies()
-	for body in bodies_array:
-		if body is Player:
-			set_on_fire(true)
 
 
 func _on_fire_timer_timeout():

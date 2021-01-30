@@ -2,6 +2,7 @@ extends Node2D
 class_name Level
 
 onready var walls_node = $Navigation2D/Walls
+onready var floor_node = $Navigation2D/Floor
 onready var fog_node = $Navigation2D/FogOfWar
 
 #### ACCESSORS ####
@@ -13,8 +14,11 @@ func get_class() -> String: return "Level"
 #### BUILT-IN ####
 
 func _ready() -> void:
+	var __ = Events.connect("damage_tile", self, "_on_tile_damaged")
+	
 	randomize()
 	init_fog_of_war()
+	init_floor_tiles()
 
 
 #### VIRTUALS ####
@@ -23,9 +27,14 @@ func _ready() -> void:
 
 #### LOGIC ####
 
+func init_floor_tiles():
+	for cell in walls_node.get_used_cells():
+		floor_node.set_cellv(cell, -1)
+
+
 func init_fog_of_war():
-	var map_cells = walls_node.get_used_cells()
-	var tile_size = walls_node.get_cell_size()
+	var map_cells = floor_node.get_used_cells()
+	var tile_size = floor_node.get_cell_size()
 	var fog_tile_size = Vector2(8, 8)
 	
 	for cell in map_cells:
@@ -36,18 +45,27 @@ func init_fog_of_war():
 
 
 func is_position_walkable(pos: Vector2) -> bool:
-	var cell = walls_node.world_to_map(pos)
+	var wall_tiles = walls_node.get_used_cells()
+	var floor_tiles = floor_node.get_used_cells()
 	
-	var tileset = walls_node.get_tileset()
-	var cell_id = walls_node.get_cellv(cell)
+	var cell = floor_node.world_to_map(pos)
 	
-	if cell_id == TileMap.INVALID_CELL:
-		return false
-	
-	var tile_name = tileset.tile_get_name(cell_id)
-	
-	return tile_name.is_subsequence_ofi("floor")
+	return cell in floor_tiles && !cell in wall_tiles
 
+
+func damage_tile(cell: Vector2):
+	if !cell in walls_node.get_used_cells():
+		return
+	
+	var cell_id = walls_node.get_cellv(cell)
+	var tileset = walls_node.get_tileset()
+	var cell_name = tileset.tile_get_name(cell_id)
+	
+	var floor_tile_id = tileset.find_tile_by_name("Floor")
+	
+	if cell_name == "Soil":
+		walls_node.set_cellv(cell, -1)
+		floor_node.set_cellv(cell, floor_tile_id)
 
 
 #### INPUTS ####
@@ -55,3 +73,6 @@ func is_position_walkable(pos: Vector2) -> bool:
 
 
 #### SIGNAL RESPONSES ####
+
+func _on_tile_damaged(cell: Vector2):
+	damage_tile(cell)
