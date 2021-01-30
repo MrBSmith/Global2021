@@ -3,6 +3,8 @@ class_name Level
 
 const gold_nugget_scene = preload("res://Scenes/InteractiveObjects/GoldNugget/GoldNugget.tscn")
 
+var level_size = Vector2(40, 20)
+
 onready var walls_node = $Navigation2D/Walls
 onready var floor_node = $Navigation2D/Floor
 onready var fog_node = $Navigation2D/FogOfWar
@@ -10,6 +12,7 @@ onready var fog_node = $Navigation2D/FogOfWar
 onready var tile_size = floor_node.get_cell_size()
 
 export var gold_objective : int = 5
+export var debug := false
 
 #### ACCESSORS ####
 
@@ -23,8 +26,12 @@ func _ready() -> void:
 	var __ = Events.connect("damage_tile", self, "_on_tile_damaged")
 	
 	randomize()
+	
+	generate_walls()
+	
 	init_fog_of_war()
 	init_floor_tiles()
+	
 
 
 #### VIRTUALS ####
@@ -32,6 +39,29 @@ func _ready() -> void:
 
 
 #### LOGIC ####
+
+
+func generate_walls():
+	var noise = OpenSimplexNoise.new()
+	
+	# Configure
+	noise.seed = randi()
+	noise.octaves = 3
+	noise.period = 10.0
+	noise.persistence = 0.5
+	
+	var soil_tile_id = walls_node.get_tileset().find_tile_by_name("Soil")
+	var wall_tile_id = walls_node.get_tileset().find_tile_by_name("Wall")
+	
+	for i in range(level_size.y):
+		for j in range(level_size.x):
+			var value = noise.get_noise_2d(j, i)
+			
+			if i == 0 or j == 0 or i == level_size.y - 1 or j == level_size.x - 1:
+				walls_node.set_cell(j, i, wall_tile_id)
+			elif value > 0.2:
+				walls_node.set_cell(j, i, soil_tile_id)
+
 
 func init_floor_tiles():
 	for cell in walls_node.get_used_cells():
@@ -78,6 +108,10 @@ func damage_tile(cell: Vector2):
 
 #### INPUTS ####
 
+func _input(_event: InputEvent) -> void:
+	if debug && Input.is_action_just_pressed("debug_reinitilize_level"):
+		walls_node.clear()
+		generate_walls()
 
 
 #### SIGNAL RESPONSES ####

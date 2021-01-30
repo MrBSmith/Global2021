@@ -2,6 +2,9 @@ extends Actor
 class_name Player
 
 onready var lighter = $Lighter
+onready var camera = $Camera2D
+
+export var debug := false
 
 var direction := Vector2.UP setget set_direction, get_direction
 
@@ -53,5 +56,12 @@ func _input(_event: InputEvent) -> void:
 	
 	if Input.is_action_just_pressed("ui_accept"):
 		Events.emit_signal("interact")
+	
+	if debug && Input.is_action_just_pressed("debug_dezoom"):
+		var zoom = camera.get_zoom()
+		if zoom == Vector2.ONE:
+			camera.set_zoom(Vector2(2, 2))
+		else: 
+			camera.set_zoom(Vector2.ONE)
 
 #### SIGNAL RESPONSES ####
