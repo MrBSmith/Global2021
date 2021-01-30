@@ -1,14 +1,14 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Scenes/Actors/Player/Player.gd" type="Script" id=1]
 [ext_resource path="res://Scenes/Actors/Player/Player.png" type="Texture" id=2]
 [ext_resource path="res://Scenes/Actors/Actor.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Scenes/Light/Lighter.tscn" type="PackedScene" id=4]
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 7.5
 
 [node name="Player" instance=ExtResource( 3 )]
-z_index = 1
 script = ExtResource( 1 )
 
 [node name="CollisionShape2D" parent="." index="0"]
@@ -26,3 +26,5 @@ editor_draw_drag_margin = true
 
 [node name="Sprite" parent="." index="2"]
 texture = ExtResource( 2 )
+
+[node name="Lighter" parent="." index="3" instance=ExtResource( 4 )]

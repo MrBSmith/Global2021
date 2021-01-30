@@ -37,6 +37,8 @@ script = ExtResource( 4 )
 [node name="Chase" type="Node" parent="StatesMachine" index="2"]
 script = ExtResource( 7 )
 
+[node name="Timer" type="Timer" parent="StatesMachine/Chase" index="0"]
+
 [node name="DetectionArea" type="Area2D" parent="." index="3"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" index="0"]

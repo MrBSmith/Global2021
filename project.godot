@@ -29,6 +29,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Scenes/Level/Level.gd"
 }, {
+"base": "Area2D",
+"class": "LightBase",
+"language": "GDScript",
+"path": "res://Scenes/Light/LightBase.gd"
+}, {
 "base": "Navigation2D",
 "class": "Pathfinder",
 "language": "GDScript",
@@ -64,6 +69,7 @@ _global_script_class_icons={
 "Chase": "",
 "Enemy": "",
 "Level": "",
+"LightBase": "",
 "Pathfinder": "",
 "Player": "",
 "SeekState": "",

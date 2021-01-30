@@ -3,7 +3,7 @@ class_name WanderState
 
 onready var timer_node = $Timer
 
-export var average_wait_time : float = 3.0
+export var average_wait_time : float = 2.0
 export(float, 0.0, 1.0) var wait_time_variance : float = 0.2
 
 export var wander_radius : float = 50.0

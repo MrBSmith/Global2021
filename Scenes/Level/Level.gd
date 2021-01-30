@@ -26,9 +26,12 @@ func is_position_walkable(pos: Vector2) -> bool:
 	var tileset = walls_node.get_tileset()
 	var cell_id = walls_node.get_cellv(cell)
 	
+	if cell_id == TileMap.INVALID_CELL:
+		return false
+	
 	var tile_name = tileset.tile_get_name(cell_id)
 	
-	return cell_id != TileMap.INVALID_CELL && tile_name.is_subsequence_ofi("floor")
+	return tile_name.is_subsequence_ofi("floor")
 
 
 
