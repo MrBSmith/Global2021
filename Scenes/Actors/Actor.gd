@@ -1,6 +1,8 @@
 extends KinematicBody2D
 class_name Actor
 
+onready var level_node = get_parent()
+
 export var speed : float = 200.0
 
 #### ACCESSORS ####

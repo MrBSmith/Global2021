@@ -1,7 +1,9 @@
 extends Actor
 class_name Enemy
 
-var path := PoolVector2Array()
+onready var statemachine = $StatesMachine
+
+var move_path := PoolVector2Array()
 
 signal path_finished()
 
@@ -10,11 +12,17 @@ signal path_finished()
 func is_class(value: String): return value == "Enemy" or .is_class(value)
 func get_class() -> String: return "Enemy"
 
+func set_move_path(value: PoolVector2Array): move_path = value
+func get_move_path() -> PoolVector2Array: return move_path
+
+func set_state(value: StateBase): statemachine.set_state(value)
+func get_state() -> StateBase : return statemachine.get_state()
+func get_state_name() -> String: return statemachine.get_state_name()
 
 #### BUILT-IN ####
 
 func _ready() -> void:
-	var __ = Events.connect("send_path", self, "_on_path_received")
+	var __ = Events.connect("send_path", $StatesMachine/Wander, "_on_path_received")
 
 #### VIRTUALS ####
 
@@ -23,7 +31,7 @@ func _ready() -> void:
 #### LOGIC ####
 
 func move(delta: float):
-	var target = path[0]
+	var target = move_path[0]
 	var dir = position.direction_to(target)
 	var real_speed = speed * delta
 	var dist_to_target = position.distance_to(target)
@@ -36,8 +44,8 @@ func move(delta: float):
 	
 	if position.distance_to(target) < 2.0:
 		position = target
-		path.remove(0)
-		if path.empty():
+		move_path.remove(0)
+		if move_path.empty():
 			emit_signal("path_finished")
 
 
@@ -52,6 +60,4 @@ func move(delta: float):
  
 #### SIGNAL RESPONSES ####
 
-func _on_path_received(who: Actor, received_path: PoolVector2Array):
-	if who == self:
-		path = received_path
+

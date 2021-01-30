@@ -6,7 +6,7 @@ onready var timer_node = $Timer
 export var average_wait_time : float = 3.0
 export(float, 0.0, 1.0) var wait_time_variance : float = 0.2
 
-export var wander_radius : float = 40.0
+export var wander_radius : float = 50.0
 
 #### ACCESSORS ####
 
@@ -27,7 +27,7 @@ func enter_state():
 
 
 func update(delta: float):
-	if !owner.path.empty():
+	if !owner.get_move_path().empty():
 		owner.move(delta)
 
 
@@ -40,11 +40,14 @@ func trigger_wait_time():
 
 
 func find_wander_path():
-	var dist_to_target = rand_range(0.0, wander_radius)
-	var rdm_angle = deg2rad(rand_range(0.0, 360.0))
+	var target_point := Vector2.INF
 	
-	var dir = Vector2(cos(rdm_angle), sin(rdm_angle))
-	var target_point : Vector2 = dir * dist_to_target
+	while(!owner.level_node.is_position_walkable(target_point)):
+		var dist_to_target = rand_range(wander_radius * 0.6, wander_radius)
+		var rdm_angle = deg2rad(rand_range(0.0, 360.0))
+		
+		var dir = Vector2(cos(rdm_angle), sin(rdm_angle))
+		target_point = owner.position + dir * dist_to_target
 	
 	### CHECK IF THE DESTINATION IS VALID ###
 	
@@ -59,5 +62,11 @@ func find_wander_path():
 func _on_timer_timeout():
 	find_wander_path()
 
+
 func _on_path_finished():
 	trigger_wait_time()
+
+
+func _on_path_received(who: Actor, received_path: PoolVector2Array):
+	if who == owner && owner.get_state() == self:
+		owner.set_move_path(received_path)
