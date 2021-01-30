@@ -1,0 +1,76 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://Scenes/InteractiveObjects/Torch/Torch.gd" type="Script" id=1]
+[ext_resource path="res://Scenes/Light/LightBase.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Scenes/InteractiveObjects/Torch/Torche.png" type="Texture" id=3]
+
+[sub_resource type="Curve" id=1]
+min_value = -360.0
+max_value = 360.0
+_data = [ Vector2( 0.00833333, 222.545 ), 0.0, 0.0, 0, 0, Vector2( 1, -242.182 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=2]
+curve = SubResource( 1 )
+
+[sub_resource type="Gradient" id=3]
+offsets = PoolRealArray( 0.0103093, 0.113402, 0.525773, 0.731959, 1 )
+colors = PoolColorArray( 0.378906, 0.130249, 0.363365, 1, 1, 0, 0, 1, 0.96875, 1, 0, 1, 0, 0, 0, 0.717647, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture" id=4]
+gradient = SubResource( 3 )
+
+[sub_resource type="Curve" id=5]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.418182 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=6]
+curve = SubResource( 5 )
+
+[sub_resource type="ParticlesMaterial" id=7]
+lifetime_randomness = 0.35
+emission_shape = 1
+emission_sphere_radius = 3.0
+flag_disable_z = true
+gravity = Vector3( 0, -50, 0 )
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+radial_accel = 8.77
+radial_accel_random = 0.16
+tangential_accel = 2.94
+tangential_accel_random = 0.09
+damping = 17.89
+damping_random = 0.51
+angle = 24.1
+angle_random = 1.0
+angle_curve = SubResource( 2 )
+scale = 1.3
+scale_random = 0.57
+scale_curve = SubResource( 6 )
+color_ramp = SubResource( 4 )
+hue_variation_random = 0.2
+
+[sub_resource type="CircleShape2D" id=8]
+radius = 18.0
+
+[node name="Torch" type="Node2D"]
+z_index = 1
+script = ExtResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 3 )
+
+[node name="Fire" type="Node2D" parent="."]
+position = Vector2( 0, -4 )
+
+[node name="Light" parent="Fire" instance=ExtResource( 2 )]
+
+[node name="Particles2D" type="Particles2D" parent="Fire"]
+amount = 70
+randomness = 0.32
+process_material = SubResource( 7 )
+
+[node name="Timer" type="Timer" parent="Fire"]
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource( 8 )

@@ -19,6 +19,7 @@ func get_class() -> String: return "WanderState"
 func _ready() -> void:
 	var __ = timer_node.connect("timeout", self, "_on_timer_timeout")
 	__ = owner.connect("path_finished", self, "_on_path_finished")
+	__ = Events.connect("light_activated", self, "_on_light_activated")
 
 #### VIRTUALS ####
 
@@ -74,3 +75,12 @@ func _on_path_finished():
 func _on_path_received(who: Actor, received_path: PoolVector2Array):
 	if who == owner && owner.get_state() == self:
 		owner.set_move_path(received_path)
+
+
+func _on_light_activated(light: LightBase, active: bool):
+	if owner.get_state() != self:
+		return
+	
+	if active:
+		if owner.is_light_source_visible(light):
+			owner.seek(light)

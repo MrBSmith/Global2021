@@ -24,6 +24,7 @@ func set_state(value): statemachine.set_state(value)
 func get_state() -> StateBase : return statemachine.get_state()
 func get_state_name() -> String: return statemachine.get_state_name()
 
+
 #### BUILT-IN ####
 
 func _ready() -> void:
@@ -72,6 +73,12 @@ func chase(target: Actor):
 	set_state(chase_state)
 
 
+func is_light_source_visible(light_source: LightBase) -> bool:
+	for area in detection_area.get_overlapping_areas():
+		if area == light_source:
+			return true
+	return false
+
 #### INPUTS ####
 
  
@@ -91,6 +98,5 @@ func _on_area_entered_detection_area(area: Area2D):
 	if !area is LightBase:
 		return
 
-	if get_state_name() == "Wander":
+	if get_state_name() == "Wander" && area.is_active():
 		seek(area)
-
