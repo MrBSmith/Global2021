@@ -54,3 +54,5 @@ func interact():
 
 func _on_fire_timer_timeout():
 	set_on_fire(false)
+
+

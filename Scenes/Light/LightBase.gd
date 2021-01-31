@@ -24,6 +24,9 @@ func is_active() -> bool : return active
 func _ready() -> void:
 	var _err = connect("area_entered", self, "_on_area_entered")
 	_err = connect("area_exited", self, "_on_area_exited")
+	
+	_err = connect("body_entered", self, "_on_body_entered")
+	_err = connect("body_exited", self, "_on_body_exited")
 
 #### VIRTUALS ####
 
@@ -41,6 +44,13 @@ func update_fog_tiles():
 		else:
 			area.set_state("not_visible")
 
+
+func is_body_visible(body: PhysicsBody2D) -> bool:
+	var bodies_in_area = get_overlapping_bodies()
+	return body in bodies_in_area
+
+
+
 #### INPUTS ####
 
 
@@ -55,3 +65,13 @@ func _on_area_entered(area: Area2D):
 func _on_area_exited(area: Area2D):
 	if area is FogTile && is_active():
 		area.set_state("not_visible")
+
+
+func _on_body_entered(body: PhysicsBody2D):
+	if body is Actor:
+		Events.emit_signal("body_entered_light", self, body)
+
+
+func _on_body_exited(body: PhysicsBody2D):
+	if body is Actor:
+		Events.emit_signal("body_exited_light", self, body)

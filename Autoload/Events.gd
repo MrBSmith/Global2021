@@ -2,6 +2,8 @@ extends Node
 
 # warnings-disable
 
+signal gameover()
+
 #### PATHFINDER ####
 
 signal query_path(who, from, to)
@@ -11,7 +13,9 @@ signal send_path(who, path)
 #### INTERACTIONS ####
 
 signal interact()
-signal light_activated(light_source ,active)
+signal light_activated(light_source, active)
+signal body_entered_light(light_source, body)
+signal body_exited_light(light_source, body)
 signal damage_tile(cell)
 signal gold_collected()
 

@@ -1,10 +1,9 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://Scenes/InteractiveObjects/Torch/Torch.gd" type="Script" id=1]
 [ext_resource path="res://Scenes/Light/LightBase.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Scenes/InteractiveObjects/Torch/Torche.png" type="Texture" id=3]
 [ext_resource path="res://Scenes/InteractiveObjects/InteractiveObject.tscn" type="PackedScene" id=4]
-[ext_resource path="res://Scenes/Light/LightBase.gd" type="Script" id=5]
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 14.0
@@ -65,8 +64,8 @@ shape = SubResource( 1 )
 [node name="Fire" type="Node2D" parent="." index="2"]
 position = Vector2( 0, -4 )
 
-[node name="Light" type="Area2D" parent="Fire" index="0" instance=ExtResource( 2 )]
-script = ExtResource( 5 )
+[node name="Light" parent="Fire" index="0" instance=ExtResource( 2 )]
+scale = Vector2( 1.5, 1.5 )
 
 [node name="Particles2D" type="Particles2D" parent="Fire" index="1"]
 amount = 70

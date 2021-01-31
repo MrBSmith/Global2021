@@ -5,10 +5,13 @@ onready var statemachine = $StatesMachine
 onready var chase_state = $StatesMachine/Chase
 onready var seek_state = $StatesMachine/Seek
 onready var detection_area = $DetectionArea
+onready var hitbox = $HitBox
 
 export var debug : bool = false
 
 var move_path := PoolVector2Array()
+
+var currently_visible : bool = false setget set_currently_visible, get_currently_visible
 
 signal path_finished()
 
@@ -24,16 +27,31 @@ func set_state(value): statemachine.set_state(value)
 func get_state() -> StateBase : return statemachine.get_state()
 func get_state_name() -> String: return statemachine.get_state_name()
 
+func set_currently_visible(value: bool): 
+	currently_visible = value
+	set_visible(currently_visible)
+
+func get_currently_visible() -> bool: return currently_visible
+
 
 #### BUILT-IN ####
 
 func _ready() -> void:
+	set_visible(false)
+	
 	var __ = Events.connect("send_path", $StatesMachine/Wander, "_on_path_received")
 	__ = Events.connect("send_path", chase_state, "_on_path_received")
 	__ = Events.connect("send_path", seek_state, "_on_path_received")
+	
+	__ = Events.connect("light_activated", self, "_on_light_activated")
+	__ = Events.connect("body_entered_light", self, "_on_body_entered_light")
+	__ = Events.connect("body_exited_light", self, "_on_body_exited_light")
+	
 	__ = detection_area.connect("area_entered", self, "_on_area_entered_detection_area")
 	__ = detection_area.connect("body_entered", self, "_on_body_entered_detection_area")
 	__ = detection_area.connect("body_exited", self, "_on_body_exited_detection_area")
+	
+	__ = hitbox.connect("body_entered", self, "_on_body_entered")
 	
 	if debug:
 		__ = statemachine.connect("state_changed", $StateLabel, "_on_state_changed")
@@ -43,6 +61,19 @@ func _ready() -> void:
 
 
 #### LOGIC ####
+
+func update_visibility(exeption: LightBase = null):
+	var lights_array = get_tree().get_nodes_in_group("LightSource")
+	
+	for light in lights_array:
+		if !light.is_active() or light == exeption: continue
+		
+		if light.is_body_visible(self):
+			set_currently_visible(true)
+			return
+	
+	set_currently_visible(false)
+
 
 func move(delta: float):
 	var target = move_path[0]
@@ -83,6 +114,24 @@ func is_light_source_visible(light_source: LightBase) -> bool:
 
  
 #### SIGNAL RESPONSES ####
+
+func _on_body_entered(body: PhysicsBody2D):
+	if body is Player:
+		Events.emit_signal("gameover")
+
+func _on_body_entered_light(_light: LightBase, body: PhysicsBody2D):
+	if body == self:
+		update_visibility()
+
+
+func _on_body_exited_light(light: LightBase, body: PhysicsBody2D):
+	if body == self:
+		update_visibility(light)
+
+
+func _on_light_activated(_light_source: LightBase, _activate: bool):
+	update_visibility()
+
 
 func _on_body_entered_detection_area(body: PhysicsBody2D):
 	if body is Player:

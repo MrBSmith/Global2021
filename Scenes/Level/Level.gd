@@ -2,7 +2,15 @@ extends Node2D
 class_name Level
 
 const gold_nugget_scene = preload("res://Scenes/InteractiveObjects/GoldNugget/GoldNugget.tscn")
+const pickaxe_scene = preload("res://Scenes/InteractiveObjects/Pickaxe/Pickaxe.tscn")
+const torch_scene = preload("res://Scenes/InteractiveObjects/Torch/Torch.tscn")
+const enemy_scene = preload("res://Scenes/Actors/Enemy/Enemy.tscn")
+const gameover_scene = preload("res://Scenes/GameOver/GameOver.tscn")
 
+const minimal_torch_dist : float = 70.0
+
+var nb_torchs : int = 5
+var nb_enemy : int = 3
 var level_size = Vector2(41, 20)
 
 onready var walls_node = $Navigation2D/Walls
@@ -24,14 +32,13 @@ func get_class() -> String: return "Level"
 
 func _ready() -> void:
 	var __ = Events.connect("damage_tile", self, "_on_tile_damaged")
-	
+	__ = Events.connect("gameover", self, "_on_gameover")
 	randomize()
 	
 	generate_level()
+	generate_map_objects()
 	
 	init_fog_of_war()
-	init_floor_tiles()
-	
 
 
 #### VIRTUALS ####
@@ -93,7 +100,71 @@ func generate_level():
 	
 	# Place player
 	$Player.set_position((entry_cell + Vector2.UP) * tile_size)
+
+
+func generate_map_objects():
+	# Generate the Pickaxe
+	var floor_tiles = floor_node.get_used_cells()
+	var path := PoolVector2Array()
+	var rdm_obj_pos := Vector2.INF
+	var gen := 0
 	
+	while(path.empty() && gen < 20):
+		var rdm_id = randi() % floor_tiles.size() - 1
+		rdm_obj_pos = floor_tiles[rdm_id] * tile_size + tile_size / 2
+		
+		var player_pos = $Player.get_position()
+		
+		path = $Navigation2D.get_simple_path(rdm_obj_pos, player_pos)
+		gen += 1
+	
+	var pickaxe = pickaxe_scene.instance()
+	pickaxe.set_position(rdm_obj_pos)
+	add_child(pickaxe)
+	
+	var free_tiles = floor_tiles.duplicate()
+	
+	# Generate the torchs
+	var torch_array = Array()
+	for _i in range(nb_torchs):
+		var rdm_tile_pos = get_rdm_tile_pos(free_tiles)
+		
+		while(is_pos_too_close_from_torch(torch_array, rdm_tile_pos)):
+			rdm_tile_pos = get_rdm_tile_pos(free_tiles)
+		
+		var torch = torch_scene.instance()
+		torch.set_position(rdm_tile_pos)
+		add_child(torch)
+		torch_array.append(torch)
+	
+	
+	# Generate enemies
+	var enemies_array = Array()
+	for _i in range(nb_enemy):
+		var rdm_tile_pos = get_rdm_tile_pos(free_tiles)
+		
+		while(is_pos_too_close_from_torch(enemies_array, rdm_tile_pos)):
+			rdm_tile_pos = get_rdm_tile_pos(free_tiles)
+		
+		var enemy = enemy_scene.instance()
+		enemy.set_position(rdm_tile_pos)
+		add_child(enemy)
+		enemies_array.append(enemy)
+
+
+func get_rdm_tile_pos(tile_array: Array) -> Vector2:
+	var rdm_id = randi() % tile_array.size() - 1
+	var rdm_tile = tile_array[rdm_id]
+	tile_array.remove(rdm_id)
+	return floor_node.map_to_world(rdm_tile)
+
+
+
+func is_pos_too_close_from_torch(torch_array: Array, pos: Vector2) -> bool:
+	for torch in torch_array:
+		if pos.distance_to(torch.get_position()) < minimal_torch_dist:
+			return true
+	return false
 
 
 func is_noise_valid(noise: OpenSimplexNoise) -> bool:
@@ -121,11 +192,6 @@ func get_rdm_noise(period := 10.0, persistance:= 0.5):
 	noise.persistence = persistance
 	
 	return noise
-
-
-func init_floor_tiles():
-	for cell in walls_node.get_used_cells():
-		floor_node.set_cellv(cell, -1)
 
 
 func init_fog_of_war():
@@ -178,3 +244,6 @@ func _input(_event: InputEvent) -> void:
 
 func _on_tile_damaged(cell: Vector2):
 	damage_tile(cell)
+
+func _on_gameover():
+	var __ = get_tree().change_scene_to(gameover_scene)

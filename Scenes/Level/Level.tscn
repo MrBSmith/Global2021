@@ -17,7 +17,6 @@ debug = true
 
 [node name="Player" parent="." instance=ExtResource( 1 )]
 position = Vector2( 263.261, 130.962 )
-debug = true
 
 [node name="Navigation2D" type="Navigation2D" parent="."]
 script = ExtResource( 4 )
