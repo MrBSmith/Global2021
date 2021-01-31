@@ -6,8 +6,6 @@ onready var camera = $Camera2D
 
 export var debug := false
 
-var direction := Vector2.UP setget set_direction, get_direction
-
 var v_movement : float = 0.0
 var h_movement : float = 0.0
 
@@ -16,10 +14,7 @@ var h_movement : float = 0.0
 func is_class(value: String): return value == "Player" or .is_class(value)
 func get_class() -> String: return "Player"
 
-func set_direction(value: Vector2): 
-	direction = value
 
-func get_direction() -> Vector2: return direction
 
 #### BUILT-IN ####
 

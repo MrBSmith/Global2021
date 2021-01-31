@@ -58,7 +58,16 @@ func _ready() -> void:
 
 #### VIRTUALS ####
 
+func rotate_sprites():
+	var dir = get_direction()
+	
+	if dir.y < -0.5:
+		$Eyes.set_modulate(Color(0.0, 0.0, 0.0, 0.3))
+	else:
+		$Eyes.set_modulate(Color.white)
 
+	$Eyes.set_flip_h(dir.x < 0)
+	$Sprite.set_flip_h(dir.x < 0)
 
 #### LOGIC ####
 
@@ -78,6 +87,9 @@ func update_visibility(exeption: LightBase = null):
 func move(delta: float):
 	var target = move_path[0]
 	var dir = position.direction_to(target)
+	if dir != Vector2.ZERO:
+		set_direction(dir)
+	
 	var real_speed = speed * delta
 	var dist_to_target = position.distance_to(target)
 	
