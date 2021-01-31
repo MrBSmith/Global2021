@@ -73,7 +73,10 @@ func generate_level():
 				else:
 					walls_node.set_cell(j, i, soil_tile_id)
 			else:
-				floor_node.set_cell(j, i, floor_tile_id)
+				var rng = randi() % 6
+				var autotile_cord = Vector2.ZERO if rng != 5 else Vector2(randi() % 3, randi() % 2)
+				
+				floor_node.set_cell(j, i, floor_tile_id, false, false, false, autotile_cord)
 	
 	var wall_cells = walls_node.get_used_cells()
 	wall_cells.shuffle()
@@ -100,6 +103,9 @@ func generate_level():
 	
 	# Place player
 	$Player.set_position((entry_cell + Vector2.UP) * tile_size)
+	
+	# Update autotile
+	walls_node.update_bitmask_region(level_size)
 
 
 func generate_map_objects():
@@ -151,13 +157,11 @@ func generate_map_objects():
 		add_child(enemy)
 		enemies_array.append(enemy)
 
-
 func get_rdm_tile_pos(tile_array: Array) -> Vector2:
 	var rdm_id = randi() % tile_array.size() - 1
 	var rdm_tile = tile_array[rdm_id]
 	tile_array.remove(rdm_id)
 	return floor_node.map_to_world(rdm_tile)
-
 
 
 func is_pos_too_close_from_torch(torch_array: Array, pos: Vector2) -> bool:
@@ -226,6 +230,7 @@ func damage_tile(cell: Vector2):
 	if cell_name == "Soil" or cell_name == "Gold":
 		walls_node.set_cellv(cell, -1)
 		floor_node.set_cellv(cell, floor_tile_id)
+		walls_node.update_bitmask_area(cell)
 		if cell_name == "Gold":
 			var gold_nugget = gold_nugget_scene.instance()
 			gold_nugget.set_position(cell * tile_size + tile_size / 2)
