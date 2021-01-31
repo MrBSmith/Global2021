@@ -12,6 +12,7 @@ func get_class() -> String: return "GoldNugget"
 func _ready() -> void:
 	var __ = $FollowArea.connect("body_entered", self, "_on_follow_area_body_entered")
 	__ = $Area2D.connect("body_entered", self, "_on_collect_area_body_entered")
+	__ = $AudioStreamPlayer2D.connect("finished", self, "_on_stream_finished")
 
 #### VIRTUALS ####
 
@@ -24,7 +25,10 @@ func follow(target: Node2D):
 
 func collect():
 	Events.emit_signal("gold_collected")
-	queue_free()
+	set_visible(false)
+	$Area2D.queue_free()
+	$FollowArea.queue_free()
+	$AudioStreamPlayer2D.play()
 
 #### INPUTS ####
 
@@ -39,3 +43,6 @@ func _on_follow_area_body_entered(body: PhysicsBody2D):
 func _on_collect_area_body_entered(body: PhysicsBody2D):
 	if body is Player:
 		collect()
+
+func _on_stream_finished():
+	queue_free()

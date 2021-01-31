@@ -38,7 +38,7 @@ func _physics_process(_delta: float) -> void:
 		elif move_dir.y < -0.5:
 			if anim != "MoveUp":
 				sprite.play("MoveUp")
-		elif move_dir.x > 0.5:
+		elif abs(move_dir.x) > 0.5:
 			sprite.play("MoveHorizontal")
 		
 		sprite.set_flip_h(move_dir.x < -0.5)

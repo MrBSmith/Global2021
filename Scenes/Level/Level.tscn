@@ -1,12 +1,18 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Scenes/Actors/Player/Player.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Scenes/Level/Tileset/LevelTileset.tres" type="TileSet" id=2]
+[ext_resource path="res://Scenes/InteractiveObjects/GoldNugget/Gold.png" type="Texture" id=3]
 [ext_resource path="res://Scenes/Level/Pathfinder.gd" type="Script" id=4]
 [ext_resource path="res://Scenes/Level/Level.gd" type="Script" id=5]
+[ext_resource path="res://Global/Font/BoldCapsPixel.ttf" type="DynamicFontData" id=6]
 [ext_resource path="res://Scenes/FogOfWar/FogOfWar.gd" type="Script" id=7]
 [ext_resource path="res://Scenes/Level/Walls.gd" type="Script" id=9]
 [ext_resource path="res://Scenes/HUD/HUD.gd" type="Script" id=10]
+
+[sub_resource type="DynamicFont" id=1]
+size = 32
+font_data = ExtResource( 6 )
 
 [node name="Level" type="Node2D"]
 script = ExtResource( 5 )
@@ -58,17 +64,24 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="GUI/HUD"]
-margin_right = 40.0
-margin_bottom = 40.0
+[node name="TextureRect" type="TextureRect" parent="GUI/HUD"]
+margin_left = -1.05946
+margin_top = -5.29731
+margin_right = 46.9405
+margin_bottom = 42.7027
+texture = ExtResource( 3 )
+stretch_mode = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="GoldLabel" type="Label" parent="GUI/HUD/VBoxContainer"]
-margin_right = 40.0
-margin_bottom = 14.0
-text = "Gold: "
+[node name="GoldLabel" type="Label" parent="GUI/HUD"]
+margin_left = 43.7678
+margin_top = 0.100502
+margin_right = 91.7678
+margin_bottom = 26.1005
+custom_fonts/font = SubResource( 1 )
+text = "0/6"
 __meta__ = {
 "_edit_use_anchors_": false
 }

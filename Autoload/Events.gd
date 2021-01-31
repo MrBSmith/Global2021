@@ -3,6 +3,7 @@ extends Node
 # warnings-disable
 
 signal gameover()
+signal win()
 
 #### PATHFINDER ####
 

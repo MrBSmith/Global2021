@@ -6,6 +6,8 @@ const pickaxe_scene = preload("res://Scenes/InteractiveObjects/Pickaxe/Pickaxe.t
 const torch_scene = preload("res://Scenes/InteractiveObjects/Torch/Torch.tscn")
 const enemy_scene = preload("res://Scenes/Actors/Enemy/Enemy.tscn")
 const gameover_scene = preload("res://Scenes/GameOver/GameOver.tscn")
+const you_win_scene = preload("res://Scenes/YouWIn/YouWin.tscn")
+const mining_particles_scene = preload("res://Scenes/Particles/MiningParticles.tscn")
 
 const minimal_torch_dist : float = 70.0
 
@@ -33,6 +35,8 @@ func get_class() -> String: return "Level"
 func _ready() -> void:
 	var __ = Events.connect("damage_tile", self, "_on_tile_damaged")
 	__ = Events.connect("gameover", self, "_on_gameover")
+	__ = Events.connect("win", self, "_on_win")
+	__ = Events.connect("gold_amount_changed", self, "_on_gold_amount_changed")
 	randomize()
 	
 	generate_level()
@@ -131,11 +135,11 @@ func generate_map_objects():
 	var free_tiles = floor_tiles.duplicate()
 	
 	# Generate the torchs
-	var torch_array = Array()
+	var torch_array = []
 	for _i in range(nb_torchs):
 		var rdm_tile_pos = get_rdm_tile_pos(free_tiles)
 		
-		while(is_pos_too_close_from_torch(torch_array, rdm_tile_pos)):
+		while(is_pos_too_close_from_elem(torch_array, rdm_tile_pos)):
 			rdm_tile_pos = get_rdm_tile_pos(free_tiles)
 		
 		var torch = torch_scene.instance()
@@ -145,11 +149,11 @@ func generate_map_objects():
 	
 	
 	# Generate enemies
-	var enemies_array = Array()
+	var enemies_array = [$Player]
 	for _i in range(nb_enemy):
 		var rdm_tile_pos = get_rdm_tile_pos(free_tiles)
 		
-		while(is_pos_too_close_from_torch(enemies_array, rdm_tile_pos)):
+		while(is_pos_too_close_from_elem(enemies_array, rdm_tile_pos)):
 			rdm_tile_pos = get_rdm_tile_pos(free_tiles)
 		
 		var enemy = enemy_scene.instance()
@@ -164,8 +168,8 @@ func get_rdm_tile_pos(tile_array: Array) -> Vector2:
 	return floor_node.map_to_world(rdm_tile)
 
 
-func is_pos_too_close_from_torch(torch_array: Array, pos: Vector2) -> bool:
-	for torch in torch_array:
+func is_pos_too_close_from_elem(elem_array: Array, pos: Vector2) -> bool:
+	for torch in elem_array:
 		if pos.distance_to(torch.get_position()) < minimal_torch_dist:
 			return true
 	return false
@@ -231,9 +235,15 @@ func damage_tile(cell: Vector2):
 		walls_node.set_cellv(cell, -1)
 		floor_node.set_cellv(cell, floor_tile_id)
 		walls_node.update_bitmask_area(cell)
+		var particle = mining_particles_scene.instance()
+		var tile_pos = cell * tile_size + tile_size / 2
+		
+		add_child(particle)
+		particle.set_position(tile_pos)
+		
 		if cell_name == "Gold":
 			var gold_nugget = gold_nugget_scene.instance()
-			gold_nugget.set_position(cell * tile_size + tile_size / 2)
+			gold_nugget.set_position(tile_pos)
 			add_child(gold_nugget)
 
 
@@ -252,3 +262,10 @@ func _on_tile_damaged(cell: Vector2):
 
 func _on_gameover():
 	var __ = get_tree().change_scene_to(gameover_scene)
+
+func _on_win():
+	var __ = get_tree().change_scene_to(you_win_scene)
+
+func _on_gold_amount_changed(amount: int):
+	if amount >= gold_objective:
+		Events.emit_signal("win")

@@ -1,9 +1,9 @@
 [gd_scene load_steps=3 format=2]
 
+[ext_resource path="res://Global/Font/BoldPixel.tres" type="DynamicFont" id=1]
 [ext_resource path="res://Scenes/GameOver/GameOver.gd" type="Script" id=2]
-[ext_resource path="res://Global/Font/BoldPixel.tres" type="DynamicFont" id=3]
 
-[node name="GameOver" type="Control"]
+[node name="YouWin" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 2 )
@@ -14,22 +14,24 @@ __meta__ = {
 [node name="ColorRect" type="ColorRect" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+margin_left = -0.353554
+margin_right = -0.353546
 color = Color( 0, 0, 0, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="GameOverLabel" type="Label" parent="."]
+[node name="YouWin" type="Label" parent="."]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -123.37
-margin_top = -41.641
-margin_right = 124.63
-margin_bottom = 9.35905
-custom_fonts/font = ExtResource( 3 )
-text = "GAME OVER"
+margin_left = -102.0
+margin_top = -44.5
+margin_right = 102.0
+margin_bottom = 6.5
+custom_fonts/font = ExtResource( 1 )
+text = "YOU WIN!"
 align = 1
 valign = 1
 __meta__ = {

@@ -21,13 +21,13 @@ radius = 40.0
 [node name="Enemy" instance=ExtResource( 1 )]
 script = ExtResource( 3 )
 speed = 40.0
-debug = true
 
 [node name="CollisionShape2D" parent="." index="0"]
 shape = SubResource( 1 )
 
 [node name="Sprite" parent="." index="1"]
 frames = ExtResource( 2 )
+frame = 2
 
 [node name="StatesMachine" type="Node" parent="." index="2"]
 script = ExtResource( 6 )

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Scenes/InteractiveObjects/GoldNugget/GoldNugget.gd" type="Script" id=1]
 [ext_resource path="res://Scenes/InteractiveObjects/InteractiveObject.tscn" type="PackedScene" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://Scenes/InteractiveObjects/GoldNugget/States/Idle.gd" type="Script" id=4]
 [ext_resource path="res://AbstractClasses/StateMachine.gd" type="Script" id=5]
 [ext_resource path="res://Scenes/InteractiveObjects/GoldNugget/States/Follow.gd" type="Script" id=6]
+[ext_resource path="res://Scenes/InteractiveObjects/GoldNugget/Validation.ogg" type="AudioStream" id=7]
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 4.0
@@ -35,3 +36,6 @@ script = ExtResource( 4 )
 
 [node name="Follow" type="Node" parent="StatesMachine" index="1"]
 script = ExtResource( 6 )
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." index="4"]
+stream = ExtResource( 7 )

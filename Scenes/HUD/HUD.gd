@@ -1,7 +1,7 @@
 extends Control
 class_name HUD
 
-onready var gold_label = $VBoxContainer/GoldLabel
+onready var gold_label = $GoldLabel
 
 #### ACCESSORS ####
 
@@ -29,4 +29,4 @@ func _ready() -> void:
 #### SIGNAL RESPONSES ####
 
 func _on_gold_amount_changed(amount: int):
-	$VBoxContainer/GoldLabel.set_text("Gold: " + String(amount) + "/" + String(owner.gold_objective))
+	gold_label.set_text(String(amount) + "/" + String(owner.gold_objective))
