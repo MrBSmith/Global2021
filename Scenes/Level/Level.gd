@@ -45,6 +45,7 @@ func generate_level():
 	var soil_tile_id = walls_node.get_tileset().find_tile_by_name("Soil")
 	var wall_tile_id = walls_node.get_tileset().find_tile_by_name("Wall")
 	var gold_tile_id = walls_node.get_tileset().find_tile_by_name("Gold")
+	var floor_tile_id = walls_node.get_tileset().find_tile_by_name("Floor")
 	
 	var soil_noise = get_rdm_noise()
 	while(!is_noise_valid(soil_noise)):
@@ -64,6 +65,8 @@ func generate_level():
 					walls_node.set_cell(j, i, wall_tile_id)
 				else:
 					walls_node.set_cell(j, i, soil_tile_id)
+			else:
+				floor_node.set_cell(j, i, floor_tile_id)
 	
 	var wall_cells = walls_node.get_used_cells()
 	wall_cells.shuffle()
@@ -86,6 +89,7 @@ func generate_level():
 				walls_node.set_cell(entry_cell.x + j, entry_cell.y + i, wall_tile_id)
 			else:
 				walls_node.set_cell(entry_cell.x + j, entry_cell.y + i, -1)
+				floor_node.set_cell(entry_cell.x + j, entry_cell.y + i, floor_tile_id)
 	
 	# Place player
 	$Player.set_position((entry_cell + Vector2.UP) * tile_size)
@@ -125,7 +129,7 @@ func init_floor_tiles():
 
 
 func init_fog_of_war():
-	var map_cells = floor_node.get_used_cells()
+	var map_cells = floor_node.get_used_cells() + walls_node.get_used_cells()
 	var fog_tile_size = Vector2(8, 8)
 	
 	for cell in map_cells:
