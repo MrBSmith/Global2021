@@ -3,6 +3,7 @@ class_name Player
 
 onready var lighter = $Lighter
 onready var camera = $Camera2D
+onready var sprite = $Sprite
 
 export var debug := false
 
@@ -27,6 +28,25 @@ func _physics_process(_delta: float) -> void:
 		var dir_angle = direction.angle() - deg2rad(90)
 		var current_lighter_rot = lighter.get_rotation()
 		lighter.set_rotation(lerp(current_lighter_rot, dir_angle, 0.2))
+		
+		# Handle the animations
+		sprite.play()
+		var anim = sprite.get_animation()
+		if move_dir.y > 0.5:
+			if anim != "MoveDown":
+				sprite.play("MoveDown")
+		elif move_dir.y < -0.5:
+			if anim != "MoveUp":
+				sprite.play("MoveUp")
+		elif move_dir.x > 0.5:
+			sprite.play("MoveHorizontal")
+		
+		sprite.set_flip_h(move_dir.x < -0.5)
+	else:
+		sprite.stop()
+		sprite.set_frame(0)
+	
+	
 	
 	var velocity = move_dir * speed
 	var __ = move_and_slide(velocity)
