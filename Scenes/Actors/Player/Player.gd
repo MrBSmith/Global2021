@@ -16,7 +16,9 @@ var h_movement : float = 0.0
 func is_class(value: String): return value == "Player" or .is_class(value)
 func get_class() -> String: return "Player"
 
-func set_direction(value: Vector2): direction = value
+func set_direction(value: Vector2): 
+	direction = value
+
 func get_direction() -> Vector2: return direction
 
 #### BUILT-IN ####
@@ -26,6 +28,10 @@ func _physics_process(_delta: float) -> void:
 	var move_dir = Vector2(v_movement, h_movement).normalized()
 	if move_dir != Vector2.ZERO:
 		set_direction(move_dir)
+		
+		var dir_angle = direction.angle() - deg2rad(90)
+		var current_lighter_rot = lighter.get_rotation()
+		lighter.set_rotation(lerp(current_lighter_rot, dir_angle, 0.2))
 	
 	var velocity = move_dir * speed
 	var __ = move_and_slide(velocity)
